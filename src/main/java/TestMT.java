@@ -1,7 +1,10 @@
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
@@ -11,9 +14,15 @@ public class TestMT {
     @Test
     public void CheckMoneyTransfer(){
         System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
+
         WebDriver driver = new ChromeDriver();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        driver.manage().window().maximize();
+
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.get("https://next.privat24.ua/money-transfer/card");
+
         By CardSource = By.xpath("//input[@data-qa-node='numberdebitSource']");
         By expSource = By.xpath("//input[@data-qa-node='expiredebitSource']");
         By cvvSource = By.xpath("//input[@data-qa-node='cvvdebitSource']");
@@ -43,6 +52,16 @@ public class TestMT {
         driver.findElement(comment).click();
         driver.findElement(commentAdd).sendKeys("HAPPY RELEASE DAY");
         driver.findElement(submitBtn).submit();
+
+        wait.until(ExpectedConditions.textToBePresentInElementLocated(By.xpath("//span[@data-qa-node='payer-card']"),"4006 8956 8904 8337"));
+
+        Assert.assertEquals("11 EUR",driver.findElement(By.xpath("//div[@data-qa-node='payer-amount']")).getText());
+        Assert.assertEquals("4558 0328 5584 1715",driver.findElement(By.xpath("//span[@data-qa-node='receiver-card']")).getText());
+        Assert.assertEquals("ILLIDAN STORMRAGE",driver.findElement(By.xpath("//div[@data-qa-node='receiver-name']")).getText());
+        Assert.assertEquals("11 EUR",driver.findElement(By.xpath("//div[@data-qa-node='receiver-amount']")).getText());
+
+    //    driver.close();
+
     }
 
 
